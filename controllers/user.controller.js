@@ -7,10 +7,12 @@ const path = require("path");
 const nodemailer = require("../libs/nodemailer");
 const { getHTML, sendMail } = require("../libs/nodemailer");
 const Sentry = require("../libs/sentry");
+const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   register: async (req, res, next) => {
     try {
+      let { id } = Number(req.params.id);
       let { first_name, last_name, email, password } = req.body;
 
       if (!first_name || !last_name || !email || !password) {
@@ -40,6 +42,17 @@ module.exports = {
         },
       });
       delete user.password;
+
+      const newNotification = await prisma.notification.create({
+        data: {
+          title: "Notification",
+          message: "Account has been created successfully",
+          createdAt: formattedDate(new Date()),
+          user_id: user.id,
+        },
+      });
+
+      io.emit(`user-${user.id}`, newNotification);
 
       res.status(200).json({
         status: true,
@@ -142,13 +155,13 @@ module.exports = {
   resetPassword: async (req, res, next) => {
     try {
       let { token } = req.query;
+      let user_id = req.params.id;
       let { password, confirmPassword } = req.body;
 
       if (!password || !confirmPassword) {
         return res.status(400).json({
           status: false,
-          message:
-            "Password and Password confirmation must be required",
+          message: "Password and Password confirmation must be required",
           data: null,
         });
       }
@@ -179,6 +192,17 @@ module.exports = {
           select: { id: true, first_name: true, last_name: true, email: true },
         });
 
+        const newNotification = await prisma.notification.create({
+          data: {
+            title: "Notification",
+            message: "Password successfully reset",
+            createdAt: formattedDate(new Date()),
+            user_id: updateUser.id,
+          },
+        });
+
+        io.emit(`user-${updateUser.id}`, newNotification);
+
         res.status(200).json({
           status: true,
           message: "Reset user password successfully!",
@@ -207,6 +231,29 @@ module.exports = {
     try {
       let { token } = req.query;
       res.render("reset-password.ejs", { token });
+    } catch (error) {
+      next(error);
+    }
+  },
+  pageNotification: async (req, res, next) => {
+    try {
+      const id = Number(req.params.id);
+      const notifications = await prisma.notification.findMany({
+        where: { user_id: id },
+      });
+
+      if (!notifications.length) {
+        return res.status(404).json({
+          status: false,
+          message: "There are no notifications for this user.",
+          data: null,
+        });
+      }
+
+      res.render("notification.ejs", {
+        user_id: id,
+        notifications: notifications,
+      });
     } catch (error) {
       next(error);
     }

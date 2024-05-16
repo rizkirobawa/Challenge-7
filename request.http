@@ -3,12 +3,23 @@ POST http://localhost:3000/api/v1/users
 Content-Type: application/json
 
 {
-    "first_name":"Rizki",
-    "last_name": "Robawa",
-    "email": "21082010208@student.upnjatim.ac.id",
+    "first_name":"Pak",
+    "last_name": "Woi",
+    "email": "sonyexperiat3ultra@gmail.com",
     "password": "123456"
 }
 
 ### Get all user
 GET http://localhost:3000/api/v1/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGFzc3dvcmQiOm51bGwsImlhdCI6MTcxNTA3MzY5NX0.pB8eVEtsjusmxS52_zpOWG3a3HusUhG1ycRCDPIf7gQ
+
+### Create notification
+POST http://localhost:3000/api/v1/notification/1
+Content-Type: application/json
+
+{
+    "title": "Test 2",
+    "message": "Haloo world"
+}
+
+###
+GET http://localhost:3000/api/v1/notif/notification

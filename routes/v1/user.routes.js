@@ -7,7 +7,8 @@ const {
   resetPassword,
   pageLogin,
   pageForgetPass,
-  pageResetPass
+  pageResetPass,
+  pageNotification
 } = require("../../controllers/user.controller");
 const { restrict } = require("../../middlewares/auth.middleware");
 
@@ -21,5 +22,6 @@ router.post("/reset-password", resetPassword);
 router.get("/login", pageLogin);
 router.get("/forgot-password", pageForgetPass);
 router.get("/reset-password", pageResetPass);
+router.get("/notification/:id", pageNotification)
 
 module.exports = router;

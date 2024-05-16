@@ -1,87 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notification</title>
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
         margin: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
+        padding: 0;
       }
-      h1 {
-        color: #333;
+
+      header,
+      nav,
+      main,
+      footer {
+        margin: 20px;
       }
-      #notification-box {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-        max-width: 500px;
+
+      ul {
+        list-style-type: none;
+        padding: 0;
       }
-      .notification {
-        background-color: #007bff;
-        color: white;
-        padding: 15px;
-        border-radius: 5px;
-        position: relative;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
-      .notification h4 {
-        margin: 0 0 5px 0;
-        font-size: 1.2rem;
-      }
-      .notification p {
-        margin: 0;
-      }
-      .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
+
+      li {
+        margin-bottom: 10px;
       }
     </style>
   </head>
   <body>
-    <h1>Notification Page</h1>
-    <div id="notification-box"></div>
+    <header>
+      <h1>User ID: <span id="userId"><%= user_id %></span></h1>
+    </header>
+    <main>
+      <p>Unread notif: <span id="unreadCnt">0</span></p>
+      <h2>Notification list:</h2>
+      <ul id="notification-list">
+        <% notifications.forEach(item => { %>
+        <li>
+          <b style="color: gray"><%= item.title %></b>
+          <p style="color: gray"><%= item.message%></p>
+        </li>
+        <% }) %>
+      </ul>
+    </main>
+    <footer>
+      <p>&copy; 2024 rizkirobawa. All rights reserved.</p>
+    </footer>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      const socket = io();
-      const notificationBox = document.getElementById("notification-box");
+      let socket = io();
+      let notifications = document.getElementById("notification-list");
+      let userId = document.getElementById("userId").textContent;
+      let unreadCntElement = document.getElementById("unreadCnt");
+      let unreadCnt = 0;
 
-      socket.on("notif", (value) => {
-        const { email, status, message } = value;
-
-        const notification = document.createElement("div");
-        notification.classList.add("notification");
-
-        const title = document.createElement("h4");
-        title.textContent = status;
-
-        const text = document.createElement("p");
-        text.textContent = `${message} with Email = ${email}`;
-
-        const closeButton = document.createElement("button");
-        closeButton.textContent = "✕";
-        closeButton.classList.add("close-btn");
-        closeButton.onclick = () => notification.remove();
-
-        notification.appendChild(title);
-        notification.appendChild(text);
-        notification.appendChild(closeButton);
-
-        notificationBox.appendChild(notification);
+      socket.on(`user-${userId}`, (notif) => {
+        let item = document.createElement("li");
+        item.innerHTML = `
+        <b>${notif.title}</b>
+        <p>${notif.message}</p>
+        `;
+        notifications.append(item);
+        unreadCnt++;
+        unreadCntElement.textContent = unreadCnt;
       });
     </script>
   </body>
