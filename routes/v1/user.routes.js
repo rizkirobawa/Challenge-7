@@ -12,7 +12,7 @@ const {
 const { restrict } = require("../../middlewares/auth.middleware");
 
 router.post("/users", register);
-router.get("/users", restrict, index);
+router.get("/users", index);
 router.get("/users/:id", restrict, show);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);

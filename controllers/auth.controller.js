@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
-// const Sentry = require("../libs/sentry");
+const Sentry = require("../libs/sentry");
 
 module.exports = {
   login: async (req, res, next) => {
@@ -32,14 +32,8 @@ module.exports = {
 
       delete user.password;
     
-      // let token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY);
       let token = jwt.sign(user, JWT_SECRET_KEY);
 
-      // res.json({
-      //   status: true,
-      //   message: "OK",
-      //   data: { user, token },
-      // });
       return res.status(201).json({
         status: true,
         message: "success",

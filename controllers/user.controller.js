@@ -6,6 +6,7 @@ const { JWT_SECRET_KEY } = process.env;
 const path = require("path");
 const nodemailer = require("../libs/nodemailer");
 const { getHTML, sendMail } = require("../libs/nodemailer");
+const Sentry = require("../libs/sentry");
 
 module.exports = {
   register: async (req, res, next) => {
@@ -103,22 +104,24 @@ module.exports = {
   forgotPassword: async (req, res, next) => {
     try {
       let { email } = req.body;
-      const findUser = await prisma.user.findUnique({ where: { email} });
-  
+      const findUser = await prisma.user.findUnique({ where: { email } });
+
       if (!findUser) {
         return res.status(404).json({
           status: false,
           message: "Email not found",
         });
       }
-  
+
       const token = jwt.sign({ email: findUser.email }, JWT_SECRET_KEY);
 
       const html = await nodemailer.getHTML("email-reset-password.ejs", {
-        name: findUser.first_name, 
-        url: `${req.protocol}://${req.get('host')}/api/v1/reset-password?token=${token}`,
+        name: findUser.first_name,
+        url: `${req.protocol}://${req.get(
+          "host"
+        )}/api/v1/reset-password?token=${token}`,
       });
-  
+
       try {
         await nodemailer.sendMail(email, "Email Forget Password", html);
         return res.status(200).json({
@@ -135,29 +138,53 @@ module.exports = {
       next(error);
     }
   },
-  
 
   resetPassword: async (req, res, next) => {
     try {
-      const { token } = req.query;
-      const { id } = req.params;
+      let { token } = req.query;
+      let { password, confirmPassword } = req.body;
 
-      const existingUser = await prisma.user.findUnique({
-        where: { id: parseInt(id) },
+      if (!password || !confirmPassword) {
+        return res.status(400).json({
+          status: false,
+          message:
+            "Password and Password confirmation must be required",
+          data: null,
+        });
+      }
+
+      if (password !== confirmPassword) {
+        return res.status(400).json({
+          status: false,
+          message:
+            "Please ensure that the password and password confirmation match!",
+          data: null,
+        });
+      }
+
+      let encryptedPassword = await bcrypt.hash(password, 10);
+
+      jwt.verify(token, JWT_SECRET_KEY, async (err, decoded) => {
+        if (err) {
+          return res.status(400).json({
+            status: false,
+            message: "Bad request",
+            err: err.message,
+            data: null,
+          });
+        }
+        const updateUser = await prisma.user.update({
+          where: { email: decoded.email },
+          data: { password: encryptedPassword },
+          select: { id: true, first_name: true, last_name: true, email: true },
+        });
+
+        res.status(200).json({
+          status: true,
+          message: "Reset user password successfully!",
+          data: updateUser,
+        });
       });
-
-      if (!existingUser) {
-        return res
-          .status(404)
-          .json({ status: false, message: "User not exists" });
-      }
-
-      try {
-        const verify = jwt.verify(token, JWT_SECRET_KEY);
-        res.render("reset-password", { verify });
-      } catch (error) {
-        res.send("Not verified");
-      }
     } catch (err) {
       next(err);
     }

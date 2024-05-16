@@ -1,5 +1,5 @@
 const Sentry = require("@sentry/node");
-const express = require("express"); // Improt express
+const express = require("express");
 const app = express();
 
 const { SENTRY_DSN, ENV } = process.env;
