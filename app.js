@@ -7,10 +7,7 @@ const app = express();
 const Sentry = require("./libs/sentry");
 
 // Sentry
-// The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.requestHandler());
-
-// TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
 
 // view engine setup
@@ -30,7 +27,6 @@ app.get("/", (req, res) =>
   })
 );
 
-// The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 
 // 500 error handler

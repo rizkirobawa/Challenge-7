@@ -239,16 +239,8 @@ module.exports = {
     try {
       const id = Number(req.params.id);
       const notifications = await prisma.notification.findMany({
-        where: { user_id: id },
+        where: { user_id: id }
       });
-
-      if (!notifications.length) {
-        return res.status(404).json({
-          status: false,
-          message: "There are no notifications for this user.",
-          data: null,
-        });
-      }
 
       res.render("notification.ejs", {
         user_id: id,

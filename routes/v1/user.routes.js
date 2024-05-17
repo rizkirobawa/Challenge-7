@@ -22,6 +22,6 @@ router.post("/reset-password", resetPassword);
 router.get("/login", pageLogin);
 router.get("/forgot-password", pageForgetPass);
 router.get("/reset-password", pageResetPass);
-router.get("/notification/:id", pageNotification)
+router.get("/users/:id/notification", pageNotification)
 
 module.exports = router;

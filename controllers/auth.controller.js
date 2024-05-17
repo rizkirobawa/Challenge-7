@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
 const Sentry = require("../libs/sentry");
+const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
   login: async (req, res, next) => {
@@ -33,6 +34,17 @@ module.exports = {
       delete user.password;
     
       let token = jwt.sign(user, JWT_SECRET_KEY);
+
+      const newNotification = await prisma.notification.create({
+        data: {
+          title: "Notification",
+          message: "Login successfully",
+          createdAt: formattedDate(new Date()),
+          user_id: user.id,
+        },
+      });
+
+      io.emit(`user-${user.id}`, newNotification);
 
       return res.status(201).json({
         status: true,

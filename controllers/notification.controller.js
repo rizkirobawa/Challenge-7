@@ -57,12 +57,5 @@ module.exports = {
     } catch (err) {
       next(err);
     }
-  },
-  pageNotification: async (req, res, next) => {
-    try {
-      res.render("notification.ejs");
-    } catch (err) {
-      next(err);
-    }
-  },
+  }
 };

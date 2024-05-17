@@ -1,69 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Notification</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-      header,
-      nav,
-      main,
-      footer {
-        margin: 20px;
-      }
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
 
-      ul {
-        list-style-type: none;
-        padding: 0;
-      }
+    main {
+      padding: 20px;
+    }
 
-      li {
-        margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>User ID: <span id="userId"><%= user_id %></span></h1>
-    </header>
-    <main>
-      <p>Unread notif: <span id="unreadCnt">0</span></p>
-      <h2>Notification list:</h2>
-      <ul id="notification-list">
-        <% notifications.forEach(item => { %>
-        <li>
-          <b style="color: gray"><%= item.title %></b>
-          <p style="color: gray"><%= item.message%></p>
-        </li>
-        <% }) %>
-      </ul>
-    </main>
-    <footer>
-      <p>&copy; 2024 rizkirobawa. All rights reserved.</p>
-    </footer>
+    h1 {
+      margin: 0;
+    }
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      let socket = io();
-      let notifications = document.getElementById("notification-list");
-      let userId = document.getElementById("userId").textContent;
-      let unreadCntElement = document.getElementById("unreadCnt");
-      let unreadCnt = 0;
+    p {
+      margin: 0;
+    }
 
-      socket.on(`user-${userId}`, (notif) => {
-        let item = document.createElement("li");
-        item.innerHTML = `
-        <b>${notif.title}</b>
-        <p>${notif.message}</p>
-        `;
-        notifications.append(item);
-        unreadCnt++;
-        unreadCntElement.textContent = unreadCnt;
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: #f0f0f0;
+    }
+
+    li b {
+      color: #333;
+    }
+
+    li.new {
+      background-color: #fff;
+    }
+
+    footer {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    #unreadCnt {
+      background-color: #e74c3c;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 50%;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>User ID: <span id="userId"><%= user_id %></span></h1>
+  </header>
+  <main>
+    <p>Unread notifications: <span id="unreadCnt">0</span></p>
+    <h2>Notification List:</h2>
+    <ul id="notification-list">
+      <% notifications.forEach((item, index) => { %>
+      <li class="notification <%= index === notifications.length - 1 ? 'new' : '' %>">
+        <b><%= item.title %></b>
+        <p><%= item.message %></p>
+        <p><%= item.createdAt %></p>
+      </li>
+      <% }) %>
+    </ul>
+  </main>
+  <footer>
+    <p>&copy; 2024 rizkirobawa. All rights reserved.</p>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let socket = io();
+    let notifications = document.getElementById("notification-list");
+    let userId = document.getElementById("userId").textContent;
+    let unreadCntElement = document.getElementById("unreadCnt");
+    let unreadCnt = 0;
+
+    function addNotification(notif) {
+      let item = document.createElement("li");
+      item.innerHTML = `
+      <b>${notif.title}</b>
+      <p>${notif.message}</p>
+      <p>${notif.createdAt}</p>
+      `;
+      notifications.append(item);
+      unreadCnt++;
+      unreadCntElement.textContent = unreadCnt;
+  
+      item.classList.add('new');
+    }
+  
+    socket.on(`user-${userId}`, (notif) => {
+      addNotification(notif);
+    });
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      let newNotifications = document.querySelectorAll(".new");
+      newNotifications.forEach((notification) => {
+        notification.classList.remove("new");
+        notification.style.backgroundColor = "#f0f0f0";
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
