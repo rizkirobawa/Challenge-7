@@ -34,8 +34,6 @@ module.exports = {
         },
       });
 
-      // io.emit(`user-${user_id}`, newNotification);
-
       return res.status(201).json({
         status: true,
         message: "Notification created successfully",

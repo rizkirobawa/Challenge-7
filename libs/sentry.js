@@ -8,9 +8,7 @@ Sentry.init({
   environment: ENV,
   dsn: SENTRY_DSN,
   integrations: [
-   // enable HTTP calls tracing
    new Sentry.Integrations.Http({ tracing: true }),
-   // enable Express.js middleware tracing
    new Sentry.Integrations.Express({ app })
   ],
   tracesSampleRate: 1.0
