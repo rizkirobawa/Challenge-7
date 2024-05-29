@@ -1,4 +1,4 @@
-const router = require("express").Router();
+const router = require('express').Router();
 const {
   register,
   index,
@@ -8,20 +8,20 @@ const {
   pageLogin,
   pageForgetPass,
   pageResetPass,
-  pageNotification
-} = require("../../controllers/user.controller");
-const { restrict } = require("../../middlewares/auth.middleware");
+  pageNotification,
+} = require('../../controllers/user.controller');
+const { restrict } = require('../../middlewares/auth.middleware');
 
-router.post("/users", register);
-router.get("/users", index);
-router.get("/users/:id", restrict, show);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+router.post('/users', register);
+router.get('/users', index);
+router.get('/users/:id', restrict, show);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 // Render
-router.get("/login", pageLogin);
-router.get("/forgot-password", pageForgetPass);
-router.get("/reset-password", pageResetPass);
-router.get("/users/:id/notification", pageNotification)
+router.get('/login', pageLogin);
+router.get('/forgot-password', pageForgetPass);
+router.get('/reset-password', pageResetPass);
+router.get('/users/:id/notification', pageNotification);
 
 module.exports = router;
