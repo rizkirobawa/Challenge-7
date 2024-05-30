@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 const path = require('path');
-const router = require('./routes/v1');
+const router = require('./routes/v1/index');
 const app = express();
 const Sentry = require('./libs/sentry');
 
