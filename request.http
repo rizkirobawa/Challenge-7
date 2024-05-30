@@ -23,3 +23,14 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/api/v1/notif/notification
+
+###
+POST https://challenge-7-be-r7pmajolc-rizki-robawas-projects.vercel.app/api/v1/users
+Content-Type: application/json
+
+{
+    "first_name":"Rizki",
+    "last_name": "Robawa",
+    "email": "21082010208@student.upnjatim.ac.id",
+    "password": "123456"
+}
