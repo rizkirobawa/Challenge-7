@@ -25,7 +25,7 @@ Content-Type: application/json
 GET http://localhost:3000/api/v1/notif/notification
 
 ###
-POST https://challenge-7-be-r7pmajolc-rizki-robawas-projects.vercel.app/api/v1/users
+POST https://challenge-7-be-js-rizki-robawas-projects.vercel.app/api/v1/users
 Content-Type: application/json
 
 {
