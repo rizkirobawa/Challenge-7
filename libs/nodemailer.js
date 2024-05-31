@@ -13,7 +13,10 @@ oauth2Client.setCredentials({ refresh_token: refreshToken });
 module.exports = {
   sendMail: async (to, subject, html) => {
     try {
-      const accessToken = await oauth2Client.getAccessToken();  
+      console.log("Getting access token...");
+      const accessToken = await oauth2Client.getAccessToken();
+      console.log("Access token obtained:", accessToken);
+
       const transport = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -22,17 +25,20 @@ module.exports = {
           clientId: GOOGLE_CLIENT_ID,
           clientSecret: GOOGLE_CLIENT_SECRET,
           refreshToken: refreshToken,
-          accessToken: accessToken,
+          accessToken: accessToken.token,
         },
       });
 
-      transport.sendMail({
+      console.log("Sending email...");
+      await transport.sendMail({
         to,
         subject,
         html,
       });
+      console.log("Email sent successfully!");
     } catch (err) {
-      console.log(err);
+      console.error("Error sending email:", err);
+      throw err;
     }
   },
 

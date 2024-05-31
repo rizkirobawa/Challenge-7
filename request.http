@@ -29,9 +29,9 @@ POST https://challenge-7-be-js-rizki-robawas-projects.vercel.app/api/v1/users
 Content-Type: application/json
 
 {
-    "first_name":"Rizki",
-    "last_name": "Robawa",
-    "email": "sonyexperiat3ultra@gmail.com",
+    "first_name":"Test",
+    "last_name": "Vercel",
+    "email": "aviatick2024@gmail.com",
     "password": "123456"
 }
 
