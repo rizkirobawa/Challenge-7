@@ -22,7 +22,7 @@ module.exports = {
           clientId: GOOGLE_CLIENT_ID,
           clientSecret: GOOGLE_CLIENT_SECRET,
           refreshToken: refreshToken,
-          accessToken: accessToken,
+          accessToken: accessToken.token,
         },
       });
 
