@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 const path = require('path');
+const cors = require("cors");
 const router = require('./routes/v1/index');
 const app = express();
 const Sentry = require('./libs/sentry');
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(router);
